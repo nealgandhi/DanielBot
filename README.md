@@ -3,5 +3,5 @@ A Bot created for the UTD ECS Discord Server based on our mascot, Daniel the Duc
 
 
 # Created By:
-Neal Gandhi, Aditya Rathod, Alex Habich, Michelle Kelman, Travis Dula, Huy Nguyen, Lisa Wu, and Brandon Philachack
+Neal Gandhi, Aditya Rathod, Alex Habich, Michelle Kelman, Travis Dula, Lisa Wu, Brandon Philachack, and Huy Nguyen
 
