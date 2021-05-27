@@ -26,7 +26,7 @@ class TestExtension(bot: ExtensibleBot) : Extension(bot) {
 
             action {
                 message.channel.createEmbed {
-                    title = "Test response"
+                    title = "Test response title"
                     description = "Test description"
 
                     field {
