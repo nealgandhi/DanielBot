@@ -22,6 +22,9 @@ class TestExtension(bot: ExtensibleBot) : Extension(bot) {
         command(TestExtension::TestArgs) {
             name = "test"
 
+
+
+
             description = "Test command, please ignore"
 
             action {
