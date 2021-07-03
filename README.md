@@ -27,3 +27,6 @@ meme storms, spam chains, and star sprees. Defining these events are beyond the 
 self-evident to any active Duck Server member. As such, any bot that supplements this community must be consistent with
 this laid-back and memey culture. One great example of a bot integrating with our community is the third-party bot Carl,
 who frequently drops quips in chat for people to laugh about and is configurable by server moderators.
+
+## Contributing
+See our [contributing guide](/.github/CONTRIBUTING.md) for information on how to contribute to Daniel Bot!
