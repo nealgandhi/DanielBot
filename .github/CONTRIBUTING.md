@@ -32,9 +32,9 @@ see the issue for details on typos fixed.
   - This can be configured in IDEA, under "Version Control", then "Commit" in Settings.
 
 ## Submitting Changes
-Most of Daniel Bot's work is done on feature branches. For example, the FAQ system is developed on `feat/faq`.
+Most of Daniel Bot's work is done on feature branches. See [here](/docs/branches.md) for an explanation of this.
 
 Once a feature is finished and ready to be integrated into Daniel Bot, you should squash your commits if there are a
 lot, and rebase the branch onto `main`. Instructions on how to do this are available
-[here](/docs/dev/rebase-and-squash.md). Once the branch is rebased, open a Pull Request to merge your feature branch
+[here](/docs/rebase-and-squash.md). Once the branch is rebased, open a Pull Request to merge your feature branch
 into `main`. All GitHub Actions must pass before a PR will be merged.

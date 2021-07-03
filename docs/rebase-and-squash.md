@@ -8,8 +8,8 @@ our repository's updates. For more information, read
 ## Using the Command Line
 First, make sure you have committed all changes on the branch.
 
-Next, run `git fetch <remote> main`. To find out what remote to use, run `git remote -v`. For example, if our repo is
-under `origin`, you would run `git fetch origin main` (without the <>).
+Next, run `git fetch <remote> main` (To find out what remote to use, run `git remote -v`. For example, if our repo is
+under `origin`, you would run `git fetch origin main`, without the <>).
 
 Next, run `git rebase -i --onto <remote>/main`. This should be the same remote as before. For example,
 `git rebase -i --onto origin/main`. This starts the rebase.
@@ -49,11 +49,11 @@ First, make sure you have committed all changes on the branch.
 
 Next, open the Git panel. This is under "View", then "Tool Windows", then "Git".
 
-![the Git panel](git-panel.png)
+![the Git panel](img/git-panel.png)
 
 Next, Click the "Fetch All Remotes" button on the left side:
 
-![the "Fetch All Remotes" button](fetch-all-remotes.png)
+![the "Fetch All Remotes" button](img/fetch-all-remotes.png)
 
 Next, select the commits you want to squash, right click, and choose "Squash Commits...". Type the combined commit
 message here. Don't just leave the commit message as the two original messages, and make sure the combined summary
@@ -62,7 +62,7 @@ message here. Don't just leave the commit message as the two original messages, 
 After you've squashed all the commits you want to, right click "main" under "origin" and choose "Rebase Current onto
 Selected":
 
-![the "Rebase Current onto Selected" option](rebase-current-onto-selected.png)
+![the "Rebase Current onto Selected" option](img/rebase-current-onto-selected.png)
 
 If there are conflicts, IDEA will tell you where they are. Either use IDEA's conflict editor to resolve these, or
 edit the files normally. Afterwards, continue the rebase using the popup in the bottom right, or the bottom panel.
