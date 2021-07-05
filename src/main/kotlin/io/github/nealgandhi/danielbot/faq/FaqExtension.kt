@@ -62,7 +62,7 @@ class FaqExtension : Extension() {
                                     Page(
                                         title = entry.question,
                                         description = entry.answer,
-                                        footer = entry.originalQuestionLink?.let { "[Original]($it)" },
+                                        url = entry.originalQuestionLink,
                                     )
                                 )
                             }
