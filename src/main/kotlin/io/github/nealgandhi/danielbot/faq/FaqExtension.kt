@@ -65,11 +65,12 @@ class FaqExtension : Extension() {
             subCommand(::ListArgs) {
                 name = "list"
                 description = "List all frequently-asked questions"
-                autoAck = AutoAckType.PUBLIC
+                autoAck = AutoAckType.NONE
 
                 action {
                     if (faqService.questionCount == 0) {
-                        publicFollowUp {
+                        ack(true)
+                        ephemeralFollowUp {
                             content = "No questions yet!"
                         }
                     } else {
@@ -77,6 +78,7 @@ class FaqExtension : Extension() {
                         check(entries != null)
                         val owner = user.asUser()
 
+                        ack(false)
                         paginator {
                             keepEmbed = false
                             this.owner = owner
