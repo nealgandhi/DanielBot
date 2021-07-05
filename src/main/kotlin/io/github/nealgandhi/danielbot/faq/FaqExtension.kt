@@ -74,9 +74,11 @@ class FaqExtension : Extension() {
                     } else {
                         val entries = faqService.getAllEntries(guildId)
                         check(entries != null)
+                        val owner = user.asUser()
 
                         paginator {
                             keepEmbed = false
+                            this.owner = owner
                             entries.forEach { entry ->
                                 page(
                                     Page(
