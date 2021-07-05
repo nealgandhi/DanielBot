@@ -10,6 +10,7 @@ import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.pagination.pages.Page
 import dev.kord.common.annotation.KordPreview
 import dev.kord.common.entity.Snowflake
+import dev.kord.core.entity.Guild
 import org.koin.core.component.inject
 
 class FaqExtension : Extension() {
@@ -18,22 +19,22 @@ class FaqExtension : Extension() {
     private val faqService: FaqService by inject()
 
     interface HasGuildArg {
-        val guildId: Long?
+        val guild: Guild?
     }
 
     class CreateArgs : Arguments(), HasGuildArg {
         val question by string("question", "The frequently asked question")
         val answer by string("answer", "The answer to the question")
         val originalQuestionLink by optionalString("original-question-link", "Link to the message where the question was asked")
-        override val guildId by optionalLong("guild-id", "ID of the guild this FAQ is for.")
+        override val guild by optionalGuild("guild", "The guild this FAQ is for.")
     }
 
     class ListArgs : Arguments(), HasGuildArg {
-        override val guildId by optionalLong("guild-id", "ID of the guild to list FAQs for.")
+        override val guild by optionalGuild("guild", "The guild to list FAQs for.")
     }
 
     private inline val <T> SlashCommandContext<T>.guildId: Snowflake where T: Arguments, T: HasGuildArg get() {
-        val id = arguments.guildId?.let(::Snowflake) ?: guild?.id
+        val id = (arguments.guild ?: guild)?.id
         check(id != null)
         return id
     }
