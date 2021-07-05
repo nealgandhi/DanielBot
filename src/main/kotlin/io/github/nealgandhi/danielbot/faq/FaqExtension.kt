@@ -5,9 +5,11 @@ package io.github.nealgandhi.danielbot.faq
 import com.kotlindiscord.kord.extensions.commands.converters.impl.*
 import com.kotlindiscord.kord.extensions.commands.parser.Arguments
 import com.kotlindiscord.kord.extensions.commands.slash.AutoAckType
+import com.kotlindiscord.kord.extensions.commands.slash.SlashCommandContext
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.pagination.pages.Page
 import dev.kord.common.annotation.KordPreview
+import dev.kord.common.entity.Snowflake
 import org.koin.core.component.inject
 
 class FaqExtension : Extension() {
@@ -15,10 +17,25 @@ class FaqExtension : Extension() {
 
     private val faqService: FaqService by inject()
 
-    class FaqCreateArgs : Arguments() {
+    interface HasGuildArg {
+        val guildId: Long?
+    }
+
+    class CreateArgs : Arguments(), HasGuildArg {
         val question by string("question", "The frequently asked question")
         val answer by string("answer", "The answer to the question")
         val originalQuestionLink by optionalString("original-question-link", "Link to the message where the question was asked")
+        override val guildId by optionalLong("guild-id", "ID of the guild this FAQ is for.")
+    }
+
+    class ListArgs : Arguments(), HasGuildArg {
+        override val guildId by optionalLong("guild-id", "ID of the guild to list FAQs for.")
+    }
+
+    private inline val <T> SlashCommandContext<T>.guildId: Snowflake where T: Arguments, T: HasGuildArg get() {
+        val id = arguments.guildId?.let(::Snowflake) ?: guild?.id
+        check(id != null)
+        return id
     }
 
     override suspend fun setup() {
@@ -28,12 +45,12 @@ class FaqExtension : Extension() {
             name = "faq"
             description = "FAQ-related commands"
 
-            subCommand(::FaqCreateArgs) {
+            subCommand(::CreateArgs) {
                 name = "create"
                 description = "Add a question to the list of frequently-asked questions"
 
                 action {
-                    val successful = faqService.addQuestion(arguments.question, arguments.answer, arguments.originalQuestionLink)
+                    val successful = faqService.addQuestion(guildId, arguments.question, arguments.answer, arguments.originalQuestionLink)
                     ephemeralFollowUp {
                         content = if (successful) {
                             "Added question successfully!"
@@ -44,7 +61,7 @@ class FaqExtension : Extension() {
                 }
             }
 
-            subCommand {
+            subCommand(::ListArgs) {
                 name = "list"
                 description = "List all frequently-asked questions"
                 autoAck = AutoAckType.PUBLIC
@@ -55,9 +72,12 @@ class FaqExtension : Extension() {
                             content = "No questions yet!"
                         }
                     } else {
+                        val entries = faqService.getAllEntries(guildId)
+                        check(entries != null)
+
                         paginator {
                             keepEmbed = false
-                            faqService.getAllEntries().forEach { entry ->
+                            entries.forEach { entry ->
                                 page(
                                     Page(
                                         title = entry.question,
