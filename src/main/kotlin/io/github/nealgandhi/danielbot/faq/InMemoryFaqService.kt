@@ -1,16 +1,14 @@
 package io.github.nealgandhi.danielbot.faq
 
-import dev.kord.common.entity.Snowflake
-
 class InMemoryFaqService : FaqService {
-    private val faq = mutableMapOf<Snowflake, MutableList<FaqEntry>>()
+    private val faq = mutableMapOf<QuestionLocation, MutableList<FaqEntry>>()
 
     override val questionCount: Int get() = faq.size
 
-    override fun addQuestion(guildId: Snowflake, entry: FaqEntry): Boolean {
-        faq.computeIfAbsent(guildId) { mutableListOf() }.add(entry)
+    override fun addQuestion(location: QuestionLocation, entry: FaqEntry): Boolean {
+        faq.computeIfAbsent(location) { mutableListOf() }.add(entry)
         return true
     }
 
-    override fun getAllEntries(guildId: Snowflake): Iterable<FaqEntry>? = faq[guildId]
+    override fun getAllEntries(location: QuestionLocation): Iterable<FaqEntry>? = faq[location]
 }

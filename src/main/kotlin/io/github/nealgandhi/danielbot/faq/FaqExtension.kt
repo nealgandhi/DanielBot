@@ -9,89 +9,162 @@ import com.kotlindiscord.kord.extensions.commands.slash.SlashCommandContext
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.pagination.pages.Page
 import dev.kord.common.annotation.KordPreview
-import dev.kord.common.entity.Snowflake
-import dev.kord.core.entity.Guild
+import io.github.nealgandhi.danielbot.isDm
 import org.koin.core.component.inject
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class FaqExtension : Extension() {
     override val name: String get() = "faq"
 
     private val faqService: FaqService by inject()
 
-    interface HasGuildArg {
-        val guild: Guild?
-    }
-
-    class CreateArgs : Arguments(), HasGuildArg {
+    sealed class AddArgs : Arguments() {
         val question by string("question", "The frequently asked question")
         val answer by string("answer", "The answer to the question")
         val originalQuestionLink by optionalString("original-question-link", "Link to the message where the question was asked")
-        override val guild by optionalGuild("guild", "The guild this FAQ is for.")
     }
 
-    class ListArgs : Arguments(), HasGuildArg {
-        override val guild by optionalGuild("guild", "The guild to list FAQs for.")
+    class AddChannelQuestionArgs : AddArgs() {
+        val channel by optionalChannel("channel", "The channel the question is for. Uses the current channel by default.")
     }
 
-    private inline val <T> SlashCommandContext<T>.guildId: Snowflake where T: Arguments, T: HasGuildArg get() {
-        val id = (arguments.guild ?: guild)?.id
-        check(id != null)
-        return id
+    class AddGuildQuestionArgs : AddArgs() {
+        val guild by optionalGuild("guild", "The guild the question is for. Uses the current guild by default.")
+    }
+
+    class ListChannelArgs : Arguments() {
+        val channel by optionalChannel("channel", "The channel to list FAQs for. Uses the current channel by default.")
+    }
+
+    class ListGuildArgs : Arguments() {
+        val guild by optionalGuild("guild", "The guild to list FAQs for. Uses the current guild by default.")
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    suspend inline fun <T: Arguments> SlashCommandContext<T>.isValid(location: QuestionLocation?, wantedLocationType: String): Boolean {
+        contract {
+            returns(true) implies(location != null)
+        }
+        return if (location == null) {
+            ack(true)
+            ephemeralFollowUp {
+                content = "You must supply a $wantedLocationType when using this command in DMs."
+            }
+            false
+        } else {
+            true
+        }
     }
 
     override suspend fun setup() {
-        println("Setting up FAQ")
-
         slashCommand {
             name = "faq"
             description = "FAQ-related commands"
 
-            subCommand(::CreateArgs) {
-                name = "create"
-                description = "Add a question to the list of frequently-asked questions"
+            this.group("add") {
+                description = "Add a question to the list of frequently-asked questions."
 
-                action {
-                    val successful = faqService.addQuestion(guildId, arguments.question, arguments.answer, arguments.originalQuestionLink)
-                    ephemeralFollowUp {
-                        content = if (successful) {
-                            "Added question successfully!"
-                        } else {
-                            "Failed to add question to FAQ."
+                suspend fun <T : AddArgs> SlashCommandContext<T>.addQuestion(location: QuestionLocation?, wantedLocationType: String) {
+                    if (isValid(location, wantedLocationType)) {
+                        val successful = faqService.addQuestion(location, arguments.question, arguments.answer, arguments.originalQuestionLink)
+                        ack(true)
+                        ephemeralFollowUp {
+                            content = if (successful) {
+                                "Added question successfully."
+                            } else {
+                                "Failed to add question."
+                            }
                         }
+                    }
+                }
+
+                subCommand(::AddChannelQuestionArgs) {
+                    name = "channel-specific"
+                    description = "Add a channel-specific question."
+                    autoAck = AutoAckType.NONE
+
+                    action {
+                        val channel = arguments.channel ?: channel
+                        addQuestion(ChannelSpecificQuestion(channel.id).takeUnless { channel.type.isDm }, "channel")
+                    }
+                }
+
+                subCommand(::AddGuildQuestionArgs) {
+                    name = "guild-wide"
+                    description = "Add a guild-wide question."
+                    autoAck = AutoAckType.NONE
+
+                    action {
+                        val guild = arguments.guild ?: guild
+                        addQuestion(guild?.id?.let(::GuildWideQuestion), "guild")
                     }
                 }
             }
 
-            subCommand(::ListArgs) {
-                name = "list"
-                description = "List all frequently-asked questions"
-                autoAck = AutoAckType.NONE
+            group("list") {
+                description = "List frequently asked questions"
 
-                action {
-                    if (faqService.questionCount == 0) {
-                        ack(true)
-                        ephemeralFollowUp {
-                            content = "No questions yet!"
-                        }
-                    } else {
-                        val entries = faqService.getAllEntries(guildId)
-                        check(entries != null)
-                        val owner = user.asUser()
+                suspend fun <T : Arguments> SlashCommandContext<T>.listFaqs(location: QuestionLocation?, wantedLocationType: String, locationMention: String?, footer: String?) {
+                    if (isValid(location, wantedLocationType)) {
+                        val entries = faqService.getAllEntries(location)
 
-                        ack(false)
-                        paginator {
-                            keepEmbed = false
-                            this.owner = owner
-                            entries.forEach { entry ->
-                                page(
-                                    Page(
-                                        title = entry.question,
-                                        description = entry.answer,
-                                        url = entry.originalQuestionLink,
-                                    )
-                                )
+                        if (entries == null) {
+                            ack(true)
+                            ephemeralFollowUp {
+                                content = "There aren't any FAQs for $locationMention yet"
                             }
-                        }.send()
+                        } else {
+                            val owner = user.asUser()
+
+                            ack(false)
+                            paginator {
+                                keepEmbed = false
+                                this.owner = owner
+                                entries.forEach { entry ->
+                                    page(
+                                        Page(
+                                            title = entry.question,
+                                            description = entry.answer,
+                                            url = entry.originalQuestionLink,
+                                            footer = footer,
+                                        )
+                                    )
+                                }
+                            }.send()
+                        }
+                    }
+                }
+
+                subCommand(::ListChannelArgs) {
+                    name = "channel-specific"
+                    description = "List channel-specific frequently asked questions"
+                    autoAck = AutoAckType.NONE
+
+                    action {
+                        val channel = arguments.channel ?: channel
+                        listFaqs(
+                            ChannelSpecificQuestion(channel.id).takeUnless { channel.type.isDm },
+                            "channel",
+                            channel.mention,
+                            "#${channel.data.name.value}",
+                        )
+                    }
+                }
+
+                subCommand(::ListGuildArgs) {
+                    name = "guild-wide"
+                    description = "List guild-wide frequently asked questions"
+                    autoAck = AutoAckType.NONE
+
+                    action {
+                        val guild = arguments.guild ?: guild
+                        listFaqs(
+                            guild?.id?.let(::GuildWideQuestion),
+                            "guild",
+                            guild?.data?.name,
+                            guild?.data?.name,
+                        )
                     }
                 }
             }
