@@ -81,7 +81,7 @@ class FaqExtension : Extension() {
                     }
 
                     val successful =
-                        faqService.addQuestion(location, arguments.question, arguments.answer, link)
+                        faqService.addQuestion(location, interaction.id, arguments.question, arguments.answer, link)
                     ack(true)
                     ephemeralFollowUp {
                         content = if (successful) {
