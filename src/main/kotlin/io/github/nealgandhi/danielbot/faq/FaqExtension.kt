@@ -9,6 +9,7 @@ import com.kotlindiscord.kord.extensions.commands.slash.SlashCommandContext
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.pagination.pages.Page
 import dev.kord.common.annotation.KordPreview
+import io.github.nealgandhi.danielbot.MessageLink
 import io.github.nealgandhi.danielbot.isDm
 import org.koin.core.component.inject
 import kotlin.contracts.ExperimentalContracts
@@ -66,15 +67,27 @@ class FaqExtension : Extension() {
                 description = "Add a question to the list of frequently-asked questions."
 
                 suspend fun <T : AddArgs> SlashCommandContext<T>.addQuestion(location: QuestionLocation?, wantedLocationType: String) {
-                    if (isValid(location, wantedLocationType)) {
-                        val successful = faqService.addQuestion(location, arguments.question, arguments.answer, arguments.originalQuestionLink)
+                    if (!isValid(location, wantedLocationType)) {
+                        return
+                    }
+
+                    val link = arguments.originalQuestionLink?.let(MessageLink::fromText)
+                    if (arguments.originalQuestionLink != null && link == null) {
                         ack(true)
                         ephemeralFollowUp {
-                            content = if (successful) {
-                                "Added question successfully."
-                            } else {
-                                "Failed to add question."
-                            }
+                            content = "`${arguments.originalQuestionLink}` is not a valid message link."
+                        }
+                        return
+                    }
+
+                    val successful =
+                        faqService.addQuestion(location, arguments.question, arguments.answer, link)
+                    ack(true)
+                    ephemeralFollowUp {
+                        content = if (successful) {
+                            "Added question successfully."
+                        } else {
+                            "Failed to add question."
                         }
                     }
                 }
@@ -126,7 +139,7 @@ class FaqExtension : Extension() {
                                         Page(
                                             title = entry.question,
                                             description = entry.answer,
-                                            url = entry.originalQuestionLink,
+                                            url = entry.originalQuestionLink?.asText,
                                             footer = footer,
                                         )
                                     )
