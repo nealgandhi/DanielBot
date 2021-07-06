@@ -120,9 +120,9 @@ class FaqExtension : Extension() {
 
                 suspend fun <T : Arguments> SlashCommandContext<T>.listFaqs(location: QuestionLocation?, wantedLocationType: String, locationMention: String?, footer: String?) {
                     if (isValid(location, wantedLocationType)) {
-                        val entries = faqService.getAllEntries(location)
+                        val entries = faqService.getAllEntries(location).iterator()
 
-                        if (entries == null) {
+                        if (!entries.hasNext()) {
                             ack(true)
                             ephemeralFollowUp {
                                 content = "There aren't any FAQs for $locationMention yet"

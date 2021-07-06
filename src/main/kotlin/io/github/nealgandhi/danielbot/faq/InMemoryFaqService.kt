@@ -8,5 +8,5 @@ class InMemoryFaqService : FaqService {
         return true
     }
 
-    override fun getAllEntries(location: QuestionLocation): Iterable<FaqEntry>? = faq[location]
+    override fun getAllEntries(location: QuestionLocation): Iterable<FaqEntry> = faq.getOrElse(location, ::emptyList)
 }

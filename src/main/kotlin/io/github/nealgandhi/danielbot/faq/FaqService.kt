@@ -15,5 +15,5 @@ interface FaqService {
     fun addQuestion(location: QuestionLocation, question: String, answer: String, originalQuestionLink: MessageLink?): Boolean =
         this.addQuestion(location, FaqEntry(question, answer, originalQuestionLink))
 
-    fun getAllEntries(location: QuestionLocation): Iterable<FaqEntry>?
+    fun getAllEntries(location: QuestionLocation): Iterable<FaqEntry>
 }
