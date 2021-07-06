@@ -2,20 +2,7 @@
 Daniel Bot is a community project, and we welcome your contributions! Here's a guide on how to contribute.
 
 ## Setting Up
-Daniel Bot needs at least Java 11 to run. This can be installed [here](https://jdk.java.net/), under "Reference
-implementations".
-
-You also need to set up a few environment variables:
-- `DISCORD_TOKEN`: Valid discord bot token. During development, do not use the real Daniel Bot's token. Instead, create an alternate bot to use for
-testing.
-- `GUILD_ONLY_COMMANDS`: ID of a discord server. If set, slash commands will only update in the given server. This updates *much* faster than global
-commands.
-
-These can be placed in a file named `.env` in the root of the repo, like this:
-```
-DISCORD_TOKEN=put token here
-GUILD_ONLY_COMMANDS=put server ID here
-```
+See the [setup guide](/docs/setup.md) for how to set up Daniel Bot.
 
 ## Commit Style
 Daniel Bot follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
