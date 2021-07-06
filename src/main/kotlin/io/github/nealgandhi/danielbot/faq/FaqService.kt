@@ -10,8 +10,6 @@ data class GuildWideQuestion(val id: Snowflake) : QuestionLocation
 data class FaqEntry(val question: String, val answer: String, val originalQuestionLink: MessageLink?)
 
 interface FaqService {
-    val questionCount: Int
-
     fun addQuestion(location: QuestionLocation, entry: FaqEntry): Boolean
 
     fun addQuestion(location: QuestionLocation, question: String, answer: String, originalQuestionLink: MessageLink?): Boolean =
