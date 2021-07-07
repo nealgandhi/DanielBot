@@ -11,7 +11,7 @@ data class MessageLink(val guildId: Snowflake, val channelId: Snowflake, val mes
             if (!link.startsWith("https://discord.com/channels/")) {
                 return null
             }
-            val ids = link.substring("https://discord.com/channels/".length).split("\\/")
+            val ids = link.substring("https://discord.com/channels/".length).split('/')
             if (ids.size != 3) {
                 return null
             }
