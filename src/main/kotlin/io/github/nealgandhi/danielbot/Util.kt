@@ -1,9 +1,6 @@
 package io.github.nealgandhi.danielbot
 
-import dev.kord.common.entity.ChannelType
 import dev.kord.common.entity.Snowflake
-
-inline val ChannelType.isDm: Boolean get() = this == ChannelType.DM || this == ChannelType.GroupDM
 
 data class MessageLink(val guildId: Snowflake, val channelId: Snowflake, val messageId: Snowflake) {
     companion object {

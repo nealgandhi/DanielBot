@@ -3,9 +3,16 @@ package io.github.nealgandhi.danielbot.faq
 import dev.kord.common.entity.Snowflake
 import io.github.nealgandhi.danielbot.MessageLink
 
-sealed interface QuestionLocation
-data class ChannelSpecificQuestion(val id: Snowflake) : QuestionLocation
-data class GuildWideQuestion(val id: Snowflake) : QuestionLocation
+enum class QuestionLocationType {
+    Guild, Category, Channel
+}
+data class QuestionLocation(val id: Snowflake, val type: QuestionLocationType) {
+    companion object {
+        fun guild(id: Snowflake) = QuestionLocation(id, QuestionLocationType.Guild)
+        fun category(id: Snowflake) = QuestionLocation(id, QuestionLocationType.Category)
+        fun channel(id: Snowflake) = QuestionLocation(id, QuestionLocationType.Channel)
+    }
+}
 
 data class FaqEntry(val id: Snowflake, val question: String, val answer: String, val originalQuestionLink: MessageLink?)
 
