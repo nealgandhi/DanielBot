@@ -31,7 +31,7 @@ see the issue for details on typos fixed.
 ## Submitting Changes
 Most of Daniel Bot's work is done on feature branches. See [here](/docs/branches.md) for an explanation of this.
 
-Features should be implemented as KordEx [`Extension`](https://kordex.kotlindiscord.com/latest/concepts/extensions/)s.
+Features should be implemented as KordEx [`Extension`](https://kordex.netlify.app/latest/)s.
 
 Once a feature is finished and ready to be integrated into Daniel Bot, you should squash your commits if there are a
 lot, and rebase the branch onto `main`. Instructions on how to do this are available
