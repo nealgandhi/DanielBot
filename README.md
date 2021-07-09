@@ -10,6 +10,9 @@ that every discord needs while also incorporating the key features that we as st
 academic-based discords. We aim to add features that create roles and channels that let us, the moderation team,
 organize the server. 
 
+## Contributing
+See our [contributing guide](/.github/CONTRIBUTING.md) for information on how to contribute to Daniel Bot!
+
 ### Context
 Around April, we came to a decision that the system we had in place to create class related categories was inefficient.
 We decided that automating this process would be best, and we came to the conclusion that we should develop a discord
@@ -27,6 +30,3 @@ meme storms, spam chains, and star sprees. Defining these events are beyond the 
 self-evident to any active Duck Server member. As such, any bot that supplements this community must be consistent with
 this laid-back and memey culture. One great example of a bot integrating with our community is the third-party bot Carl,
 who frequently drops quips in chat for people to laugh about and is configurable by server moderators.
-
-## Contributing
-See our [contributing guide](/.github/CONTRIBUTING.md) for information on how to contribute to Daniel Bot!
