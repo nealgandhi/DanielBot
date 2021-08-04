@@ -1,13 +1,12 @@
 package io.github.nealgandhi.danielbot
 
 import com.kotlindiscord.kord.extensions.commands.converters.impl.boolean
-import com.kotlindiscord.kord.extensions.commands.converters.impl.int
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.commands.parser.Arguments
 import com.kotlindiscord.kord.extensions.commands.slash.AutoAckType
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import dev.kord.common.annotation.KordPreview
-import dev.kord.rest.builder.interaction.embed
+import dev.kord.rest.builder.message.create.embed
 
 @OptIn(KordPreview::class)
 class TestExtension : Extension() {
