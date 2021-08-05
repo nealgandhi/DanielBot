@@ -5,6 +5,9 @@ import com.kotlindiscord.kord.extensions.utils.env
 import com.kotlindiscord.kord.extensions.utils.loadModule
 import dev.kord.core.kordLogger
 import io.github.nealgandhi.danielbot.prompt_sequence.PromptsTestExtension
+import io.github.nealgandhi.danielbot.role_menus.MongoRoleMenuStorage
+import io.github.nealgandhi.danielbot.role_menus.RoleMenuExtension
+import io.github.nealgandhi.danielbot.role_menus.RoleMenuStorage
 import io.github.nealgandhi.danielbot.util.requireEnv
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -23,6 +26,7 @@ suspend fun main() {
         extensions {
             add(::TestExtension)
             add(::PromptsTestExtension)
+            add(::RoleMenuExtension)
         }
         hooks {
             afterKoinSetup {
@@ -32,6 +36,9 @@ suspend fun main() {
                         val name = requireEnv("DATABASE_NAME")
                         KMongo.createClient(connectionString).coroutine.getDatabase(name)
                     }
+                }
+                loadModule {
+                    single<RoleMenuStorage> { MongoRoleMenuStorage() }
                 }
             }
         }
