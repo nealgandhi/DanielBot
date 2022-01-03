@@ -2,7 +2,7 @@
 A Bot created for the UTD ECS Discord Server based on our mascot, Daniel the Duck
 
 #### Created By
-Neal Gandhi, Aditya Rathod, Alex Habich, Kelly "Neo" Zhao, Travis Dula, Lisa Wu, Brandon Philachack, and Huy Nguyen
+Neal Gandhi, Aditya Rathod, Alex Habich, Jane "jabe" Luo, Travis Dula, Brandon Philachack, and Huy Nguyen
 
 ## Overview
 The Daniel bot, referred to as Daniel, is being developed to deliver ease of access to all the necessary functionality
